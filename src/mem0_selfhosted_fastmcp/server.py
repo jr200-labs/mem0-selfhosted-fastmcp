@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
-from typing import Any
+from typing import Any, Final
 
 import httpx
 from fastmcp import FastMCP
@@ -11,6 +11,36 @@ from fastmcp import FastMCP
 
 DEFAULT_BASE_URL = "http://mem0-memory:8765"
 OPENAPI_PATH = "/openapi.json"
+INCLUDED_PATHS: Final[tuple[str, ...]] = (
+    "/memories",
+    "/memories/{memory_id}",
+    "/memories/{memory_id}/history",
+    "/entities",
+    "/entities/{entity_type}/{entity_id}",
+)
+
+EXCLUDED_PATHS: Final[tuple[str, ...]] = (
+    # Overridden manually below because the live server requires entity scoping
+    # inside `filters`, even though the OpenAPI advertises top-level entity args.
+    "/search",
+    # Auth/bootstrap/config/admin endpoints intentionally not exposed to OpenCode.
+    "/auth/setup-status",
+    "/auth/register",
+    "/auth/login",
+    "/auth/refresh",
+    "/auth/me",
+    "/auth/change-password",
+    "/auth/onboarding-complete",
+    "/api-keys",
+    "/api-keys/{key_id}",
+    "/requests",
+    "/configure",
+    "/configure/providers",
+    "/generate-instructions",
+    "/reset",
+)
+
+ALL_CLASSIFIED_PATHS: Final[set[str]] = set(INCLUDED_PATHS) | set(EXCLUDED_PATHS)
 
 
 def _require_env(name: str) -> str:
@@ -29,18 +59,11 @@ def _build_headers() -> dict[str, str]:
 
 
 def _pruned_openapi(spec: dict[str, Any]) -> dict[str, Any]:
-    allowed_paths = {
-        "/memories",
-        "/memories/{memory_id}",
-        "/memories/{memory_id}/history",
-        "/entities",
-        "/entities/{entity_type}/{entity_id}",
-    }
     spec = dict(spec)
     spec["paths"] = {
         path: value
         for path, value in spec.get("paths", {}).items()
-        if path in allowed_paths
+        if path in INCLUDED_PATHS
     }
     return spec
 

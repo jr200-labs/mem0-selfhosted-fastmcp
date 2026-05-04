@@ -1,0 +1,22 @@
+[
+  "/api-keys",
+  "/api-keys/{key_id}",
+  "/auth/change-password",
+  "/auth/login",
+  "/auth/me",
+  "/auth/onboarding-complete",
+  "/auth/refresh",
+  "/auth/register",
+  "/auth/setup-status",
+  "/configure",
+  "/configure/providers",
+  "/entities",
+  "/entities/{entity_type}/{entity_id}",
+  "/generate-instructions",
+  "/memories",
+  "/memories/{memory_id}",
+  "/memories/{memory_id}/history",
+  "/requests",
+  "/reset",
+  "/search"
+]
