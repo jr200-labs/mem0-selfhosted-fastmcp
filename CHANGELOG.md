@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/jr200-labs/mem0-selfhosted-fastmcp/compare/v0.1.3...v0.1.4) (2026-05-04)
+
+
+### Bug Fixes
+
+* normalize blank entity args ([#6](https://github.com/jr200-labs/mem0-selfhosted-fastmcp/issues/6)) ([7d41d4b](https://github.com/jr200-labs/mem0-selfhosted-fastmcp/commit/7d41d4b6dfadb6d33e91c5d0f9af2e5e0940c62e))
+
 ## [0.1.3](https://github.com/jr200-labs/mem0-selfhosted-fastmcp/compare/v0.1.2...v0.1.3) (2026-05-04)
 
 
