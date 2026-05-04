@@ -102,7 +102,10 @@ def main() -> None:
         return
 
     server = create_server()
-    server.run(transport=args.transport, host=args.host, port=args.port)
+    if args.transport == "stdio":
+        server.run(transport="stdio")
+    else:
+        server.run(transport=args.transport, host=args.host, port=args.port)
 
 
 if __name__ == "__main__":
