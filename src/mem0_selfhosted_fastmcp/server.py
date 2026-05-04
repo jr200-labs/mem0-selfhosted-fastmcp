@@ -33,7 +33,6 @@ def _pruned_openapi(spec: dict[str, Any]) -> dict[str, Any]:
         "/memories",
         "/memories/{memory_id}",
         "/memories/{memory_id}/history",
-        "/search",
         "/entities",
         "/entities/{entity_type}/{entity_id}",
     }
@@ -54,13 +53,36 @@ def _load_openapi(base_url: str, headers: dict[str, str]) -> dict[str, Any]:
     return response.json()
 
 
+def _merge_search_filters(
+    *,
+    user_id: str | None,
+    agent_id: str | None,
+    run_id: str | None,
+    filters: dict[str, Any] | None,
+) -> dict[str, Any] | None:
+    merged = dict(filters or {})
+    for key, value in (
+        ("user_id", user_id),
+        ("agent_id", agent_id),
+        ("run_id", run_id),
+    ):
+        if value is None:
+            continue
+        if key in merged and merged[key] != value:
+            raise ValueError(
+                f"Conflicting {key} specified in both top-level args and filters"
+            )
+        merged[key] = value
+    return merged or None
+
+
 def create_server() -> FastMCP:
     base_url = os.getenv("MEM0_BASE_URL", DEFAULT_BASE_URL).rstrip("/")
     headers = _build_headers()
     openapi_spec = _pruned_openapi(_load_openapi(base_url, headers))
 
     client = httpx.AsyncClient(base_url=base_url, headers=headers, timeout=60.0)
-    return FastMCP.from_openapi(
+    server = FastMCP.from_openapi(
         openapi_spec=openapi_spec,
         client=client,
         name="mem0-selfhosted-fastmcp",
@@ -77,6 +99,34 @@ def create_server() -> FastMCP:
             "delete_entity_entities__entity_type___entity_id__delete": "delete_entity",
         },
     )
+
+    @server.tool(name="search_memories")
+    async def search_memories(
+        query: str,
+        user_id: str | None = None,
+        agent_id: str | None = None,
+        run_id: str | None = None,
+        filters: dict[str, Any] | None = None,
+        top_k: int | None = None,
+        threshold: float | None = None,
+    ) -> Any:
+        payload = {
+            "query": query,
+            "filters": _merge_search_filters(
+                user_id=user_id,
+                agent_id=agent_id,
+                run_id=run_id,
+                filters=filters,
+            ),
+            "top_k": top_k,
+            "threshold": threshold,
+        }
+        payload = {key: value for key, value in payload.items() if value is not None}
+        response = await client.post("/search", json=payload)
+        response.raise_for_status()
+        return response.json()
+
+    return server
 
 
 def main() -> None:
