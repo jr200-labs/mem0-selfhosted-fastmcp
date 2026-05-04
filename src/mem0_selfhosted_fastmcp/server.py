@@ -38,12 +38,18 @@ def _pruned_openapi(spec: dict[str, Any]) -> dict[str, Any]:
         "/entities/{entity_type}/{entity_id}",
     }
     spec = dict(spec)
-    spec["paths"] = {path: value for path, value in spec.get("paths", {}).items() if path in allowed_paths}
+    spec["paths"] = {
+        path: value
+        for path, value in spec.get("paths", {}).items()
+        if path in allowed_paths
+    }
     return spec
 
 
 def _load_openapi(base_url: str, headers: dict[str, str]) -> dict[str, Any]:
-    response = httpx.get(f"{base_url.rstrip('/')}{OPENAPI_PATH}", headers=headers, timeout=30.0)
+    response = httpx.get(
+        f"{base_url.rstrip('/')}{OPENAPI_PATH}", headers=headers, timeout=30.0
+    )
     response.raise_for_status()
     return response.json()
 
@@ -75,10 +81,18 @@ def create_server() -> FastMCP:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="FastMCP bridge for self-hosted Mem0")
-    parser.add_argument("--transport", default=os.getenv("FASTMCP_TRANSPORT", "stdio"), choices=["stdio", "streamable-http", "http", "sse"])
+    parser.add_argument(
+        "--transport",
+        default=os.getenv("FASTMCP_TRANSPORT", "stdio"),
+        choices=["stdio", "streamable-http", "http", "sse"],
+    )
     parser.add_argument("--host", default=os.getenv("HOST", "0.0.0.0"))
     parser.add_argument("--port", type=int, default=int(os.getenv("PORT", "8081")))
-    parser.add_argument("--dump-openapi", action="store_true", help="Print the pruned OpenAPI spec and exit")
+    parser.add_argument(
+        "--dump-openapi",
+        action="store_true",
+        help="Print the pruned OpenAPI spec and exit",
+    )
     args = parser.parse_args()
 
     if args.dump_openapi:
