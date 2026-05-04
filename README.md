@@ -43,6 +43,29 @@ Optional:
 - `FASTMCP_TRANSPORT` (`stdio` by default)
 - `HOST` / `PORT` for HTTP transports
 
+## Install
+
+Published package:
+- PyPI: https://pypi.org/project/mem0-selfhosted-fastmcp/
+
+Install with `uvx` (recommended for MCP clients):
+
+```bash
+uvx mem0-selfhosted-fastmcp --help
+```
+
+Install into a Python environment:
+
+```bash
+uv pip install mem0-selfhosted-fastmcp
+```
+
+or:
+
+```bash
+pip install mem0-selfhosted-fastmcp
+```
+
 ## Usage
 
 Stdio mode for OpenCode-style spawning:
@@ -50,7 +73,7 @@ Stdio mode for OpenCode-style spawning:
 ```bash
 MEM0_BASE_URL=http://mem0-memory:8765 \
 MEM0_API_KEY=... \
-uv run mem0-selfhosted-fastmcp
+uvx mem0-selfhosted-fastmcp
 ```
 
 Dump the pruned OpenAPI used for generation:
@@ -58,7 +81,7 @@ Dump the pruned OpenAPI used for generation:
 ```bash
 MEM0_BASE_URL=http://mem0-memory:8765 \
 MEM0_API_KEY=... \
-uv run mem0-selfhosted-fastmcp --dump-openapi
+uvx mem0-selfhosted-fastmcp --dump-openapi
 ```
 
 Run as HTTP MCP server:
@@ -66,7 +89,7 @@ Run as HTTP MCP server:
 ```bash
 MEM0_BASE_URL=http://mem0-memory:8765 \
 MEM0_API_KEY=... \
-uv run mem0-selfhosted-fastmcp --transport streamable-http --port 8081
+uvx mem0-selfhosted-fastmcp --transport streamable-http --port 8081
 ```
 
 ## Maintenance
@@ -95,7 +118,18 @@ make run-http          # streamable-http mode for shared/server use
 [servers.mem0]
 transport = "stdio"
 command = "uvx"
-args = ["--from", "/workspace/jr200-labs/mem0-selfhosted-fastmcp", "mem0-selfhosted-fastmcp"]
+args = ["mem0-selfhosted-fastmcp"]
+env.MEM0_BASE_URL = "http://mem0-memory:8765"
+env.MEM0_API_KEY = "${MEM0_API_KEY}"
+```
+
+For a pinned version:
+
+```toml
+[servers.mem0]
+transport = "stdio"
+command = "uvx"
+args = ["mem0-selfhosted-fastmcp==0.1.1"]
 env.MEM0_BASE_URL = "http://mem0-memory:8765"
 env.MEM0_API_KEY = "${MEM0_API_KEY}"
 ```
