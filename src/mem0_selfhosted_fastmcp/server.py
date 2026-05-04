@@ -76,6 +76,13 @@ def _load_openapi(base_url: str, headers: dict[str, str]) -> dict[str, Any]:
     return response.json()
 
 
+def _normalize_optional_str(value: str | None) -> str | None:
+    if value is None:
+        return None
+    normalized = value.strip()
+    return normalized or None
+
+
 def _merge_search_filters(
     *,
     user_id: str | None,
@@ -85,9 +92,9 @@ def _merge_search_filters(
 ) -> dict[str, Any] | None:
     merged = dict(filters or {})
     for key, value in (
-        ("user_id", user_id),
-        ("agent_id", agent_id),
-        ("run_id", run_id),
+        ("user_id", _normalize_optional_str(user_id)),
+        ("agent_id", _normalize_optional_str(agent_id)),
+        ("run_id", _normalize_optional_str(run_id)),
     ):
         if value is None:
             continue
