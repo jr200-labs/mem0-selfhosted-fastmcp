@@ -6,6 +6,12 @@ It fetches the live OpenAPI spec from a Mem0 server, prunes it to the useful
 memory operations, and exposes those endpoints as MCP tools for OpenCode or
 other MCP clients.
 
+Implementation note:
+- this uses FastMCP's official OpenAPI integration via `FastMCP.from_openapi`
+- there is no handwritten MCP protocol layer here; the bridge is generated from
+  the live Mem0 OpenAPI spec at startup and then lightly curated (path pruning
+  plus friendly MCP tool names)
+
 ## Scope
 
 Exposed tools:
@@ -61,6 +67,26 @@ Run as HTTP MCP server:
 MEM0_BASE_URL=http://mem0-memory:8765 \
 MEM0_API_KEY=... \
 uv run mem0-selfhosted-fastmcp --transport streamable-http --port 8081
+```
+
+## Maintenance
+
+Because the bridge loads the live OpenAPI spec at startup, many Mem0 API
+changes are picked up automatically without code generation. The places most
+likely to need manual updates are:
+- path allowlist changes in `server.py`
+- operationId -> MCP name mappings when upstream operationIds change
+- auth header strategy if Mem0 auth changes
+
+Helpful targets:
+
+```bash
+make sync              # install/update dependencies
+make dump-openapi      # print the pruned live OpenAPI used by the bridge
+make snapshot-openapi  # save the current pruned live OpenAPI to generated/
+make check-live        # smoke-test server creation against the live Mem0 API
+make run               # stdio mode for OpenCode
+make run-http          # streamable-http mode for shared/server use
 ```
 
 ## OpenCode MCP example
