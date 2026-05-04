@@ -9,6 +9,22 @@ dependencies = [
     "httpx>=0.28.1",
 ]
 
+[dependency-groups]
+dev = [
+    "mypy>=1.18.2",
+    "pytest>=8.4.2",
+    "ruff>=0.14.1",
+]
+
+[tool.mypy]
+packages = ["mem0_selfhosted_fastmcp"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.setuptools.package-data]
+"mem0_selfhosted_fastmcp" = ["py.typed"]
+
 [project.scripts]
 mem0-selfhosted-fastmcp = "mem0_selfhosted_fastmcp.server:main"
 
