@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/jr200-labs/mem0-selfhosted-fastmcp/compare/v0.1.1...v0.1.2) (2026-05-04)
+
+
+### Bug Fixes
+
+* avoid passing host and port to stdio transport ([7dbfd6e](https://github.com/jr200-labs/mem0-selfhosted-fastmcp/commit/7dbfd6eefb83ae6d94953b81daf037f24f362244))
+
 ## [0.1.1](https://github.com/jr200-labs/mem0-selfhosted-fastmcp/compare/v0.1.0...v0.1.1) (2026-05-04)
 
 
