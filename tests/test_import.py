@@ -10,4 +10,4 @@ def test_normalize_optional_str_treats_blank_as_none() -> None:
     assert _normalize_optional_str(None) is None
     assert _normalize_optional_str("") is None
     assert _normalize_optional_str("   ") is None
-    assert _normalize_optional_str("  jr200  ") == "jr200"
+    assert _normalize_optional_str("  sample-user  ") == "sample-user"
